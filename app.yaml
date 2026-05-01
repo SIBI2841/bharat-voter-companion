@@ -1,0 +1,9 @@
+runtime: nodejs20
+
+env_variables:
+  # Add your environment variables here
+  # GEMINI_API_KEY: "your_api_key_here"
+
+handlers:
+  - url: /.*
+    script: auto

@@ -1,0 +1,14 @@
+{
+  "name": "election-assistant",
+  "version": "1.0.0",
+  "description": "Election Assistant Application",
+  "scripts": {
+    "postinstall": "npm install --prefix client && npm install --prefix server",
+    "gcp-build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "dev": "npm run dev --prefix server"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
