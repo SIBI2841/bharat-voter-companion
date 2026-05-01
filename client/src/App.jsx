@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Home, CalendarClock, ListChecks, MessageSquareText, MapPin } from 'lucide-react';
 import Timeline from './components/Timeline';
@@ -5,15 +6,31 @@ import VotingSteps from './components/VotingSteps';
 import AssistantChat from './components/AssistantChat';
 import PollingBoothMap from './components/PollingBoothMap';
 
+function LiveClock() {
+  const [time, setTime] = React.useState(new Date());
+  
+  React.useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="live-clock" style={{ fontSize: '0.85rem', opacity: 0.8, marginLeft: '1rem', alignSelf: 'center', background: 'rgba(0,0,0,0.1)', padding: '0.3rem 0.6rem', borderRadius: '8px' }}>
+      {time.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })} | {time.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+    </div>
+  );
+}
+
 function App() {
   const location = useLocation();
 
   return (
     <div className="app-container premium-glass">
       <nav className="navbar glass-nav" aria-label="Main Navigation">
-        <div className="nav-brand" role="img" aria-label="Bharat Voter Logo">
+        <div className="nav-brand" role="img" aria-label="Bharat Voter Logo" style={{ display: 'flex', alignItems: 'center' }}>
           <span className="brand-icon" aria-hidden="true">🇮🇳</span>
-          <h1>Bharat Voter</h1>
+          <h1 style={{ margin: 0 }}>Bharat Voter</h1>
+          <LiveClock />
         </div>
         <ul className="nav-links" role="menubar">
           <li role="none">
