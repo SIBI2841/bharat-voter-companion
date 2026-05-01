@@ -114,9 +114,38 @@ function AssistantChat() {
     }));
   };
 
+  const handleTTS = async (text) => {
+    try {
+      const res = await fetch('/api/assistant/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      if (data.audioContent) {
+        const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
+        audio.play();
+      } else {
+        alert(data.message || 'TTS playback simulated (GCP credentials required)');
+      }
+    } catch (e) {
+      console.error('TTS failed', e);
+    }
+  };
+
   const renderExplanation = (data) => (
     <div className="bot-explanation">
       <p>{data.content}</p>
+      <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+        <button 
+          className="suggestion-btn" 
+          onClick={() => handleTTS(data.content)}
+          title="Listen via Google Cloud TTS"
+          style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)' }}
+        >
+          🔊 Listen
+        </button>
+      </div>
       {data.engagement && (
         <div className="engagement-box">
           <p className="engagement-prompt"><Zap size={16}/> {data.engagement.next_action}</p>

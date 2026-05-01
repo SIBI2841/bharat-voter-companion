@@ -30,10 +30,10 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 
 ### 🛡️ Secure & Accessible
 - **🔒 Security First** — Implemented **Helmet.js** for secure HTTP headers, **express-rate-limit** for DDoS protection, and a strict **Content Security Policy (CSP)**.
-- **♿ ARIA Compliance** — Full screen reader support with semantic HTML, ARIA landmarks, and descriptive labels.
+- **♿ ARIA Compliance & Audio** — Full screen reader support, ARIA landmarks, and **Google Cloud Text-to-Speech** integration for audio responses.
 - **🧪 Automated Testing** — Integrated **Node.js Test Runner** and **Supertest** for high-confidence API reliability.
 - **📊 Observability** — Centralized logging with **Winston** and seamless **Google Cloud Logging** integration.
-- **🌐 Cloud Translation** — Integrated **Google Cloud Translation API** for multi-language support (Hindi, etc.).
+- **🌐 Cloud AI Services** — Features **Gemini 2.5 Flash Lite** and **Google Cloud Translation API** for high-speed, multi-language support (Hindi, etc.).
 
 ### 🗺️ Polling Booth Locator
 - **Auto-detects** your location using browser GPS

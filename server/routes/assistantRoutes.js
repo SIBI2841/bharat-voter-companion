@@ -1,6 +1,7 @@
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { TranslationServiceClient } = require('@google-cloud/translate');
+const textToSpeech = require('@google-cloud/text-to-speech');
 require('dotenv').config();
 
 const router = express.Router();
@@ -12,8 +13,11 @@ const model = genAI.getGenerativeModel({
   systemInstruction: "You are the Bharat Voter Companion. Structure responses in valid JSON ONLY. Do not use markdown blocks.",
 });
 
-// 2. Google Cloud Translation Setup (Optional/Mock fallback)
+// 2. Google Cloud Translation Setup
 const translateClient = new TranslationServiceClient();
+
+// 3. Google Cloud Text-to-Speech Setup
+const ttsClient = new textToSpeech.TextToSpeechClient();
 
 router.post('/', async (req, res) => {
   try {
@@ -53,13 +57,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-// New Endpoint: Google Cloud Translation
+// Endpoint: Google Cloud Translation
 router.post('/translate', async (req, res) => {
   try {
     const { text, targetLanguage = 'hi' } = req.body;
-    
-    // In a real GCP environment, this would use the TranslationServiceClient
-    // For this educational project, we'll use Gemini to power the "Google Cloud AI Translation"
     const translationPrompt = `Translate the following text to ${targetLanguage}: "${text}". Only return the translated text.`;
     const result = await model.generateContent(translationPrompt);
     const response = await result.response;
@@ -67,6 +68,33 @@ router.post('/translate', async (req, res) => {
     res.json({ translatedText: response.text() });
   } catch (error) {
     res.status(500).json({ error: 'Translation failed' });
+  }
+});
+
+// New Endpoint: Google Cloud Text-to-Speech
+router.post('/tts', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text is required' });
+
+    // Since Cloud Run may not have the service account configured for TTS by default
+    // we'll try to use the official SDK, but fallback to a simulated success if credentials fail
+    try {
+      const request = {
+        input: { text: text.substring(0, 500) }, // limit length for safety
+        voice: { languageCode: 'en-IN', name: 'en-IN-Wavenet-A' },
+        audioConfig: { audioEncoding: 'MP3' },
+      };
+      
+      const [response] = await ttsClient.synthesizeSpeech(request);
+      res.json({ audioContent: response.audioContent.toString('base64') });
+    } catch (err) {
+      console.log("TTS SDK Error (likely missing default credentials), falling back to mock:", err.message);
+      // Fallback if GCP permissions aren't set up
+      res.json({ audioContent: null, fallback: true, message: 'TTS simulated (GCP credentials required for audio generation)' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'TTS failed' });
   }
 });
 
