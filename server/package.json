@@ -9,14 +9,14 @@
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {
+    "@google-cloud/logging-winston": "^6.0.1",
     "@google/genai": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^8.4.1",
     "helmet": "^8.1.0",
-    "winston": "^3.19.0",
-    "winston-cloud-logging": "^1.0.2"
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@vitest/ui": "^4.1.5",

@@ -57,7 +57,9 @@ function AssistantChat() {
       let isJson = false;
       
       try {
-        parsedData = JSON.parse(data.answer);
+        // Strip markdown code blocks if present
+        const cleanJson = data.answer.replace(/```json\n?|```/g, '').trim();
+        parsedData = JSON.parse(cleanJson);
         isJson = true;
       } catch (e) {
         parsedData = data.answer;

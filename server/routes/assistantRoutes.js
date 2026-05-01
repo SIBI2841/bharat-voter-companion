@@ -4,22 +4,16 @@ require('dotenv').config();
 
 const router = express.Router();
 
-// Initialize the GenAI SDK with production-ready config
-const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
+// Initialize the GenAI SDK
+const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
 
-const model = genAI.getGenerativeModel({
+// We'll get the model inside the route or handle mock case
+const getModel = () => genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
-  systemInstruction: "You are the Bharat Voter Companion, an expert AI assistant focused exclusively on the Indian election system. Structure ALL responses in valid JSON format ONLY. Do not use markdown code blocks.",
-  safetySettings: [
-    {
-      category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-  ],
+  systemInstruction: "You are the Bharat Voter Companion, an expert AI assistant focused exclusively on the Indian election system. You MUST output responses in valid JSON format. Do not use markdown code blocks like ```json.",
+  generationConfig: {
+    responseMimeType: "application/json",
+  }
 });
 
 router.post('/', async (req, res) => {
@@ -51,6 +45,7 @@ router.post('/', async (req, res) => {
     
     User question: ${question}`;
 
+    const model = getModel();
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
