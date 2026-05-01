@@ -1,13 +1,14 @@
 const express = require('express');
-const { GoogleGenAI, HarmCategory, HarmBlockThreshold } = require('@google/genai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
 const router = express.Router();
 
 // Initialize the GenAI SDK
-const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
+const apiKey = process.env.GEMINI_API_KEY || 'MOCK_KEY';
+const genAI = new GoogleGenerativeAI(apiKey);
 
-// We'll get the model inside the route or handle mock case
+// Get model instance
 const getModel = () => genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
   systemInstruction: "You are the Bharat Voter Companion, an expert AI assistant focused exclusively on the Indian election system. You MUST output responses in valid JSON format. Do not use markdown code blocks like ```json.",
