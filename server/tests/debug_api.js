@@ -1,4 +1,5 @@
-const fetch = require('node-fetch');
+// Using native fetch
+
 
 async function test() {
   const response = await fetch('http://localhost:8080/api/assistant', {
