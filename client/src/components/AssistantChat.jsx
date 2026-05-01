@@ -257,12 +257,12 @@ function AssistantChat() {
 
       <div className="chat-container">
         <div className="chat-header">
-          <div className="chat-header-icon" style={{background: 'linear-gradient(135deg, #FF9933, #138808)'}}>
-            <Bot size={24} color="white" />
+          <div className="chat-header-icon">
+            <Bot size={24} />
           </div>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.25rem' }}>BharatBot 🇮🇳</h3>
-            <span style={{ color: 'var(--secondary)', fontSize: '0.85rem', fontWeight: 600 }}>Active</span>
+            <span style={{ color: 'var(--green)', fontSize: '0.85rem', fontWeight: 600 }}>Active</span>
           </div>
         </div>
 
@@ -288,7 +288,7 @@ function AssistantChat() {
             placeholder="E.g., 'I am 18', 'Quiz me', or 'Explain Lok Sabha'..."
             disabled={isLoading}
           />
-          <button type="submit" className="send-btn" disabled={isLoading || !input.trim()} style={{background: '#4F46E5'}}>
+          <button type="submit" className="send-btn" disabled={isLoading || !input.trim()}>
             <Send size={20} />
           </button>
         </form>
