@@ -30,7 +30,8 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 
 ### 🛡️ Secure & Accessible
 - **🔒 Security First** — Implemented **Helmet.js** for secure HTTP headers, **express-rate-limit** for DDoS protection, and a strict **Content Security Policy (CSP)**.
-- **♿ ARIA Compliance & Audio** — Full screen reader support, ARIA landmarks, and **Google Cloud Text-to-Speech** integration for audio responses.
+- **♿ ARIA Compliance & Audio** — Full screen reader support, ARIA landmarks, and native **Web Speech API** for zero-config, lightning-fast audio responses.
+- **⏱️ Real-Time Context** — Integrated a **Live Clock and Date** display directly in the navigation bar.
 - **🧪 Automated Testing** — Integrated **Node.js Test Runner** and **Supertest** for high-confidence API reliability.
 - **📊 Observability** — Centralized logging with **Winston** and seamless **Google Cloud Logging** integration.
 - **🌐 Cloud AI Services** — Features **Gemini 2.5 Flash Lite** and **Google Cloud Translation API** for high-speed, multi-language support (Hindi, etc.).
@@ -61,8 +62,8 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 |---|---|
 | **Frontend** | React 18, Vite, React Router, Lucide Icons |
 | **Backend** | Node.js, Express.js |
-| **AI** | Google Gemini 2.5 Flash (`@google/genai`) |
-| **Maps** | OpenStreetMap + Nominatim Geocoding |
+| **AI** | Google Gemini 2.5 Flash Lite (`@google/generative-ai`) |
+| **Maps** | Google Maps Embed API |
 | **Styling** | Vanilla CSS (Glassmorphism, CSS Variables) |
 | **Deployment** | Google Cloud Run (`asia-south1` — Mumbai) |
 | **Containerization** | Docker (multi-stage build) |
