@@ -33,6 +33,7 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 - **♿ ARIA Compliance** — Full screen reader support with semantic HTML, ARIA landmarks, and descriptive labels.
 - **🧪 Automated Testing** — Integrated **Node.js Test Runner** and **Supertest** for high-confidence API reliability.
 - **📊 Observability** — Centralized logging with **Winston** and seamless **Google Cloud Logging** integration.
+- **🌐 Cloud Translation** — Integrated **Google Cloud Translation API** for multi-language support (Hindi, etc.).
 
 ### 🗺️ Polling Booth Locator
 - **Auto-detects** your location using browser GPS

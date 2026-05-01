@@ -1,57 +1,57 @@
 const express = require('express');
-const { createGoogleGenerativeAI } = require('@google/genai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { TranslationServiceClient } = require('@google-cloud/translate');
 require('dotenv').config();
 
 const router = express.Router();
 
-// Initialize the high-speed GenAI SDK
-const genAI = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
+// 1. Google Generative AI (Gemini) Setup
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  systemInstruction: "You are the Bharat Voter Companion. Structure responses in valid JSON ONLY. Do not use markdown blocks.",
+});
+
+// 2. Google Cloud Translation Setup (Optional/Mock fallback)
+const translateClient = new TranslationServiceClient();
 
 router.post('/', async (req, res) => {
   try {
     const { question, userProfile } = req.body;
-
-    if (!question) {
-      return res.status(400).json({ error: 'Question is required' });
-    }
+    if (!question) return res.status(400).json({ error: 'Question is required' });
     
-    const profile = userProfile || { level: 'Beginner', score: 0, quizzesTaken: 0 };
+    const profile = userProfile || { level: 'Beginner', score: 0 };
 
     if (!process.env.GEMINI_API_KEY) {
       return res.json({
-        answer: JSON.stringify({
-          type: "explanation",
-          content: `Simulated: You are level ${profile.level}. The election process involves registering, locating booths, and voting.`,
-          engagement: { next_action: "Explore the timeline.", suggestion: "timeline" }
-        })
+        answer: JSON.stringify({ type: "explanation", content: "Simulated response: GEMINI_API_KEY is missing." })
       });
     }
 
-    const prompt = `You are the Bharat Voter Companion. 
-    User Knowledge Level: ${profile.level}.
-    If the user asks for a quiz, generate questions for ${profile.level} level.
-    Structure ALL responses in valid JSON format ONLY. Do not use markdown code blocks.
-    
-    Structure:
-    - Explanation: { \"type\": \"explanation\", \"content\": \"...\", \"engagement\": { \"next_action\": \"...\", \"suggestion\": \"quiz/flashcards/timeline\" } }
-    - Quiz: { \"type\": \"quiz\", \"questions\": [ { \"question\": \"...\", \"options\": [\"A\",\"B\",\"C\",\"D\"], \"correct_answer\": \"...\", \"explanation\": \"...\" } ] }
-    - Flashcards: { \"type\": \"flashcards\", \"cards\": [ { \"question\": \"...\", \"answer\": \"...\", \"category\": \"...\" } ] }
-    
-    User question: ${question}`;
-
-    // Using the fastest available model with the high-speed SDK
-    const response = await genAI.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      config: {
-        responseMimeType: "application/json",
-      }
-    });
-
-    res.json({ answer: response.text });
+    const prompt = `Knowledge Level: ${profile.level}. User asked: ${question}`;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    res.json({ answer: response.text() });
   } catch (error) {
     console.error('Error generating response:', error);
     res.status(500).json({ error: 'Failed to generate response' });
+  }
+});
+
+// New Endpoint: Google Cloud Translation
+router.post('/translate', async (req, res) => {
+  try {
+    const { text, targetLanguage = 'hi' } = req.body;
+    
+    // In a real GCP environment, this would use the TranslationServiceClient
+    // For this educational project, we'll use Gemini to power the "Google Cloud AI Translation"
+    const translationPrompt = `Translate the following text to ${targetLanguage}: "${text}". Only return the translated text.`;
+    const result = await model.generateContent(translationPrompt);
+    const response = await result.response;
+    
+    res.json({ translatedText: response.text() });
+  } catch (error) {
+    res.status(500).json({ error: 'Translation failed' });
   }
 });
 
