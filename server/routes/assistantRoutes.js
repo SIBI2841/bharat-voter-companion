@@ -17,7 +17,9 @@ const model = genAI.getGenerativeModel({
 const translateClient = new TranslationServiceClient();
 
 // 3. Google Cloud Text-to-Speech Setup
-const ttsClient = new textToSpeech.TextToSpeechClient();
+const ttsClient = new textToSpeech.TextToSpeechClient({
+  apiKey: process.env.TTS_API_KEY || undefined
+});
 
 router.post('/', async (req, res) => {
   try {
