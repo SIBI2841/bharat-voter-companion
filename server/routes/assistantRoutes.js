@@ -28,8 +28,23 @@ router.post('/', async (req, res) => {
       });
     }
 
-    const prompt = `Knowledge Level: ${profile.level}. User asked: ${question}`;
-    const result = await model.generateContent(prompt);
+    const prompt = `User Knowledge Level: ${profile.level}.
+    If the user asks for a quiz, generate questions for ${profile.level} level.
+    Structure ALL responses in valid JSON format ONLY. Do not use markdown code blocks.
+    
+    Structure:
+    - Explanation: { "type": "explanation", "content": "...", "engagement": { "next_action": "...", "suggestion": "quiz/flashcards/timeline" } }
+    - Quiz: { "type": "quiz", "questions": [ { "question": "...", "options": ["A","B","C","D"], "correct_answer": "...", "explanation": "..." } ] }
+    - Flashcards: { "type": "flashcards", "cards": [ { "question": "...", "answer": "...", "category": "..." } ] }
+    
+    User question: ${question}`;
+
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
+    });
     const response = await result.response;
     res.json({ answer: response.text() });
   } catch (error) {
