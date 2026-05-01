@@ -114,22 +114,25 @@ function AssistantChat() {
     }));
   };
 
-  const handleTTS = async (text) => {
-    try {
-      const res = await fetch('/api/assistant/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
-      const data = await res.json();
-      if (data.audioContent) {
-        const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
-        audio.play();
-      } else {
-        alert(data.message || 'TTS playback simulated (GCP credentials required)');
+  const handleTTS = (text) => {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Try to find an Indian English voice for localization, fallback to default
+      const voices = window.speechSynthesis.getVoices();
+      const indianVoice = voices.find(voice => voice.lang.includes('en-IN'));
+      if (indianVoice) {
+        utterance.voice = indianVoice;
       }
-    } catch (e) {
-      console.error('TTS failed', e);
+      
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Text-to-speech is not supported in your browser.");
     }
   };
 
