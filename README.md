@@ -38,7 +38,7 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 ### 🗺️ Polling Booth Locator
 - **Auto-detects** your location using browser GPS
 - Search by **city, PIN code, or constituency name**
-- Powered by **OpenStreetMap + Nominatim** (no API key required)
+- Powered by **Google Maps API** for high-fidelity, interactive mapping
 - Direct link to the official **Election Commission of India (ECI)** voter portal
 
 ### 📅 Election Timeline

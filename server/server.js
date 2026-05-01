@@ -23,9 +23,9 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https://*.tile.openstreetmap.org", "https://*.openstreetmap.org"],
-      connectSrc: ["'self'", "https://generativelanguage.googleapis.com", "https://nominatim.openstreetmap.org"],
-      frameSrc: ["'self'", "https://www.openstreetmap.org"],
+      imgSrc: ["'self'", "data:", "https://maps.gstatic.com", "https://*.googleapis.com"],
+      connectSrc: ["'self'", "https://generativelanguage.googleapis.com"],
+      frameSrc: ["'self'", "https://maps.google.com", "https://www.google.com"],
     },
   },
 }));

@@ -8,30 +8,20 @@ function PollingBoothMap() {
   const [loading, setLoading] = useState(false);
   const [userLocated, setUserLocated] = useState(false);
 
-  // Build OpenStreetMap embed URL
+  // Build Google Maps embed URL
   const buildMapUrl = (query) => {
     const encoded = encodeURIComponent(query);
-    return `https://www.openstreetmap.org/export/embed.html?bbox=&layer=mapnik&marker=&query=${encoded}`;
+    // Standard Google Maps embed URL (no API key required for basic query embeds)
+    return `https://maps.google.com/maps?q=${encoded}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
   };
 
-  // Use Nominatim to geocode and get bbox for embed
+  // Geocode and embed using Google Maps
   const geocodeAndEmbed = async (query) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query + ', India')}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'en' } }
-      );
-      const data = await res.json();
-      if (data && data.length > 0) {
-        const { lat, lon, display_name, boundingbox } = data[0];
-        const [s, n, w, e] = boundingbox;
-        const src = `https://www.openstreetmap.org/export/embed.html?bbox=${w},${s},${e},${n}&layer=mapnik&marker=${lat},${lon}`;
-        setMapSrc(src);
-        setLocationLabel(display_name);
-      } else {
-        setLocationLabel('Location not found. Try a different query.');
-      }
+      const src = buildMapUrl(query + ' India');
+      setMapSrc(src);
+      setLocationLabel(`Searching Google Maps for: ${query}`);
     } catch {
       setLocationLabel('Error fetching location.');
     } finally {
@@ -46,8 +36,8 @@ function PollingBoothMap() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude: lat, longitude: lon } = pos.coords;
-        const delta = 0.05;
-        const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta},${lat - delta},${lon + delta},${lat + delta}&layer=mapnik&marker=${lat},${lon}`;
+        // Embed Google Maps with coordinates
+        const src = `https://maps.google.com/maps?q=${lat},${lon}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
         setMapSrc(src);
         setLocationLabel(`Your current location (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
         setUserLocated(true);
