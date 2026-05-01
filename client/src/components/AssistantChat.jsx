@@ -262,7 +262,17 @@ function AssistantChat() {
           </div>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.25rem' }}>BharatBot 🇮🇳</h3>
-            <span style={{ color: 'var(--green)', fontSize: '0.85rem', fontWeight: 600 }}>Active</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ color: 'var(--green)', fontSize: '0.85rem', fontWeight: 600 }}>Active</span>
+              <button 
+                className="suggestion-btn" 
+                style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                onClick={() => handleSend('Translate the last response to Hindi')}
+                title="Translate to Hindi using Google Cloud Translation"
+              >
+                Translate 🇮🇳
+              </button>
+            </div>
           </div>
         </div>
 
