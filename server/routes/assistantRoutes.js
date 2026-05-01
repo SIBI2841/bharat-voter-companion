@@ -1,21 +1,11 @@
 const express = require('express');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { createGoogleGenerativeAI } = require('@google/genai');
 require('dotenv').config();
 
 const router = express.Router();
 
-// Initialize the GenAI SDK
-const apiKey = process.env.GEMINI_API_KEY || 'MOCK_KEY';
-const genAI = new GoogleGenerativeAI(apiKey);
-
-// Get model instance
-const getModel = () => genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-  systemInstruction: "You are the Bharat Voter Companion, an expert AI assistant focused exclusively on the Indian election system. You MUST output responses in valid JSON format. Do not use markdown code blocks like ```json.",
-  generationConfig: {
-    responseMimeType: "application/json",
-  }
-});
+// Initialize the high-speed GenAI SDK
+const genAI = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
 
 router.post('/', async (req, res) => {
   try {
@@ -37,21 +27,28 @@ router.post('/', async (req, res) => {
       });
     }
 
-    const prompt = `User Knowledge Level: ${profile.level}. Score: ${profile.score}.
+    const prompt = `You are the Bharat Voter Companion. 
+    User Knowledge Level: ${profile.level}.
     If the user asks for a quiz, generate questions for ${profile.level} level.
+    Structure ALL responses in valid JSON format ONLY. Do not use markdown code blocks.
+    
     Structure:
-    - Explanation: { "type": "explanation", "content": "...", "engagement": { "next_action": "...", "suggestion": "quiz/flashcards/timeline" } }
-    - Quiz: { "type": "quiz", "questions": [ { "question": "...", "options": ["A","B","C","D"], "correct_answer": "...", "explanation": "..." } ] }
-    - Flashcards: { "type": "flashcards", "cards": [ { "question": "...", "answer": "...", "category": "..." } ] }
+    - Explanation: { \"type\": \"explanation\", \"content\": \"...\", \"engagement\": { \"next_action\": \"...\", \"suggestion\": \"quiz/flashcards/timeline\" } }
+    - Quiz: { \"type\": \"quiz\", \"questions\": [ { \"question\": \"...\", \"options\": [\"A\",\"B\",\"C\",\"D\"], \"correct_answer\": \"...\", \"explanation\": \"...\" } ] }
+    - Flashcards: { \"type\": \"flashcards\", \"cards\": [ { \"question\": \"...\", \"answer\": \"...\", \"category\": \"...\" } ] }
     
     User question: ${question}`;
 
-    const model = getModel();
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    // Using the fastest available model with the high-speed SDK
+    const response = await genAI.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
 
-    res.json({ answer: text });
+    res.json({ answer: response.text });
   } catch (error) {
     console.error('Error generating response:', error);
     res.status(500).json({ error: 'Failed to generate response' });
