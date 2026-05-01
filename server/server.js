@@ -1,7 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const path = require('path');
+const winston = require('winston');
 const assistantRoutes = require('./routes/assistantRoutes');
 
 dotenv.config();
@@ -9,8 +12,56 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Security Middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://*.tile.openstreetmap.org", "https://*.openstreetmap.org"],
+      connectSrc: ["'self'", "https://generativelanguage.googleapis.com", "https://nominatim.openstreetmap.org"],
+      frameSrc: ["'self'", "https://www.openstreetmap.org"],
+    },
+  },
+}));
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
+
+// Logging
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  ],
+});
+
+// Enable Cloud Logging in production
+if (process.env.NODE_ENV === 'production' && process.env.GOOGLE_PROJECT_ID) {
+  const { LoggingWinston } = require('@google-cloud/logging-winston');
+  const loggingWinston = new LoggingWinston({
+    projectId: process.env.GOOGLE_PROJECT_ID,
+  });
+  logger.add(loggingWinston);
+}
+
 app.use(cors());
 app.use(express.json());
+
+// Request logging
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+});
 
 // API Routes
 app.use('/api/assistant', assistantRoutes);
@@ -22,13 +73,14 @@ if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   });
-} else {
-  // Fallback for dev without built frontend
-  app.get('/', (req, res) => {
-    res.send('API is running. Please run frontend separately in dev mode.');
-  });
 }
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  logger.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
 });

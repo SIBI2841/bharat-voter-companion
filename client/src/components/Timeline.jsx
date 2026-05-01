@@ -36,10 +36,10 @@ function Timeline() {
       </div>
       
       <div className="timeline-container">
-        <div className="timeline">
+        <div className="timeline" role="list" aria-label="Election Timeline">
           {timelineData.map((item) => (
-            <div key={item.id} className="timeline-item">
-              <div className="timeline-marker"></div>
+            <div key={item.id} className="timeline-item" role="listitem">
+              <div className="timeline-marker" aria-hidden="true"></div>
               <div className="timeline-content">
                 <span className="timeline-date">{item.date}</span>
                 <h3>{item.title}</h3>

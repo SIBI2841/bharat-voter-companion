@@ -28,6 +28,12 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
   - **📅 Timelines** — Step-by-step visual breakdowns of election processes
   - **💡 Explanations** — Clear, concise answers with follow-up suggestions
 
+### 🛡️ Secure & Accessible
+- **🔒 Security First** — Implemented **Helmet.js** for secure HTTP headers, **express-rate-limit** for DDoS protection, and a strict **Content Security Policy (CSP)**.
+- **♿ ARIA Compliance** — Full screen reader support with semantic HTML, ARIA landmarks, and descriptive labels.
+- **🧪 Automated Testing** — Integrated **Node.js Test Runner** and **Supertest** for high-confidence API reliability.
+- **📊 Observability** — Centralized logging with **Winston** and seamless **Google Cloud Logging** integration.
+
 ### 🗺️ Polling Booth Locator
 - **Auto-detects** your location using browser GPS
 - Search by **city, PIN code, or constituency name**

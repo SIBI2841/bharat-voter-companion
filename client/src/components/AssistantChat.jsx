@@ -266,20 +266,29 @@ function AssistantChat() {
           </div>
         </div>
 
-        <div className="chat-messages">
+        <div className="chat-messages" role="log" aria-live="polite">
           {messages.map((msg) => (
-            <div key={msg.id} className={`message ${msg.sender} ${msg.isJson ? 'json-message' : ''}`}>
+            <div 
+              key={msg.id} 
+              className={`message ${msg.sender} ${msg.isJson ? 'json-message' : ''}`}
+              role="article"
+              aria-label={`${msg.sender === 'user' ? 'You' : 'Assistant'}: ${msg.sender === 'user' ? msg.text : 'Response'}`}
+            >
               {msg.sender === 'user' ? msg.text : renderBotMessage(msg)}
             </div>
           ))}
           {isLoading && (
-            <div className="message bot" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span className="dot-typing">...</span> Thinking...
+            <div className="message bot" style={{ display: 'flex', gap: '8px', alignItems: 'center' }} aria-busy="true">
+              <span className="dot-typing" aria-hidden="true">...</span> Thinking...
             </div>
           )}
         </div>
 
-        <form className="chat-input-container" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
+        <form 
+          className="chat-input-container" 
+          onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+          aria-label="Chat input form"
+        >
           <input
             type="text"
             className="chat-input"
@@ -287,9 +296,15 @@ function AssistantChat() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="E.g., 'I am 18', 'Quiz me', or 'Explain Lok Sabha'..."
             disabled={isLoading}
+            aria-label="Message to assistant"
           />
-          <button type="submit" className="send-btn" disabled={isLoading || !input.trim()}>
-            <Send size={20} />
+          <button 
+            type="submit" 
+            className="send-btn" 
+            disabled={isLoading || !input.trim()}
+            aria-label="Send message"
+          >
+            <Send size={20} aria-hidden="true" />
           </button>
         </form>
       </div>

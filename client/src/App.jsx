@@ -10,41 +10,41 @@ function App() {
 
   return (
     <div className="app-container premium-glass">
-      <nav className="navbar glass-nav">
-        <div className="nav-brand">
-          <span className="brand-icon">🇮🇳</span>
+      <nav className="navbar glass-nav" aria-label="Main Navigation">
+        <div className="nav-brand" role="img" aria-label="Bharat Voter Logo">
+          <span className="brand-icon" aria-hidden="true">🇮🇳</span>
           <h1>Bharat Voter</h1>
         </div>
-        <ul className="nav-links">
-          <li>
-            <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
-              <Home size={18} /> Home
+        <ul className="nav-links" role="menubar">
+          <li role="none">
+            <Link to="/" className={location.pathname === '/' ? 'active' : ''} role="menuitem" aria-label="Go to Home">
+              <Home size={18} aria-hidden="true" /> Home
             </Link>
           </li>
-          <li>
-            <Link to="/timeline" className={location.pathname === '/timeline' ? 'active' : ''}>
-              <CalendarClock size={18} /> Timeline
+          <li role="none">
+            <Link to="/timeline" className={location.pathname === '/timeline' ? 'active' : ''} role="menuitem" aria-label="View Election Timeline">
+              <CalendarClock size={18} aria-hidden="true" /> Timeline
             </Link>
           </li>
-          <li>
-            <Link to="/steps" className={location.pathname === '/steps' ? 'active' : ''}>
-              <ListChecks size={18} /> Steps
+          <li role="none">
+            <Link to="/steps" className={location.pathname === '/steps' ? 'active' : ''} role="menuitem" aria-label="View Voting Steps">
+              <ListChecks size={18} aria-hidden="true" /> Steps
             </Link>
           </li>
-          <li>
-            <Link to="/map" className={location.pathname === '/map' ? 'active' : ''}>
-              <MapPin size={18} /> Map
+          <li role="none">
+            <Link to="/map" className={location.pathname === '/map' ? 'active' : ''} role="menuitem" aria-label="Locate Polling Booth">
+              <MapPin size={18} aria-hidden="true" /> Map
             </Link>
           </li>
-          <li>
-            <Link to="/assistant" className={location.pathname === '/assistant' ? 'active' : ''}>
-              <MessageSquareText size={18} /> Assistant
+          <li role="none">
+            <Link to="/assistant" className={location.pathname === '/assistant' ? 'active' : ''} role="menuitem" aria-label="Talk to AI Assistant">
+              <MessageSquareText size={18} aria-hidden="true" /> Assistant
             </Link>
           </li>
         </ul>
       </nav>
 
-      <main className="main-content">
+      <main className="main-content" id="main-content" role="main">
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/timeline" element={<Timeline />} />
