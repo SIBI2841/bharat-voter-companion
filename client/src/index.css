@@ -54,30 +54,45 @@ body {
 }
 
 /* Deeper Mesh Background */
+/* Dynamically Flowing Indian Flag Background */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   background: 
-    radial-gradient(circle at 10% 20%, rgba(255, 153, 51, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(19, 136, 8, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.15) 0%, transparent 70%);
-  filter: blur(80px);
-  animation: meshFlow 25s infinite alternate ease-in-out;
+    linear-gradient(135deg, rgba(255, 153, 51, 0.15) 0%, transparent 30%),
+    linear-gradient(225deg, rgba(19, 136, 8, 0.15) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    linear-gradient(45deg, #010204 25%, #050810 50%, #010204 75%);
+  background-size: 400% 400%;
+  animation: tricolorFlow 15s infinite alternate ease-in-out;
 }
 
-@keyframes meshFlow {
-  0% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.1) translate(2%, 2%); }
-  100% { transform: scale(1) translate(-2%, -1%); }
+@keyframes tricolorFlow {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Specific highlight for the "Flow" - floating liquid blobs */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at var(--mouse-x, 20%) var(--mouse-y, 30%), rgba(255, 153, 51, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 80% 70%, rgba(19, 136, 8, 0.1) 0%, transparent 25%);
+  filter: blur(60px);
+  pointer-events: none;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  align-items: center; /* Center horizontally */
+  align-items: center;
 }
 
 /* Floating Liquid Nav - Perfectly Centered */
@@ -88,7 +103,7 @@ body::before {
   padding: 0.75rem 1.75rem;
   margin: 1.5rem auto;
   width: min(900px, calc(100% - 3rem));
-  background: rgba(10, 10, 10, 0.5);
+  background: rgba(10, 10, 10, 0.4);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-xl);
@@ -281,6 +296,73 @@ body::before {
   color: var(--text-muted);
   font-size: 1rem;
   line-height: 1.4;
+}
+
+/* Voting Steps - Fixed Alignment & Premium Cards */
+.steps-container {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.steps-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.step-card {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
+  background: var(--surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: all 0.4s var(--spring-easing);
+  box-shadow: var(--shadow-specular);
+}
+
+.step-card:hover {
+  background: var(--surface-hover);
+  transform: translateX(10px) scale(1.01);
+  border-color: var(--border-bright);
+}
+
+.step-number {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: 800;
+  border-right: 1px solid var(--border);
+  letter-spacing: -0.05em;
+  font-family: 'Outfit', sans-serif;
+}
+
+.step-content {
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.step-content h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+}
+
+.step-content p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1.5;
 }
 
 /* Assistant Chat - Liquid Interface */
