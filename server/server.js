@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const winston = require('winston');
 const assistantRoutes = require('./routes/assistantRoutes');
+const securityRoutes = require('./routes/securityRoutes');
 
 dotenv.config();
 
@@ -68,6 +69,7 @@ app.use((req, res, next) => {
 
 // API Routes
 app.use('/api/assistant', assistantRoutes);
+app.use('/api/security', securityRoutes);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {

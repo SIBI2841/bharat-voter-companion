@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Send, Bot, User, CheckCircle2, XCircle, Lightbulb, Zap, LayoutList, History } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Send, Bot, User, CheckCircle2, XCircle, Lightbulb, Zap, LayoutList, History, ShieldAlert } from 'lucide-react';
+import ReCAPTCHA from "react-google-recaptcha";
 
 function AssistantChat() {
   const [messages, setMessages] = useState([
@@ -19,6 +20,8 @@ function AssistantChat() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const recaptchaRef = useRef();
 
   // State for Quizzes and Flashcards
   const [activeQuizAnswers, setActiveQuizAnswers] = useState({});
@@ -38,11 +41,45 @@ function AssistantChat() {
     const messageText = textOverride || input;
     if (!messageText.trim()) return;
 
-    if (!textOverride) setInput('');
+    if (!captchaToken && !textOverride) {
+      alert("Please complete the reCAPTCHA verification to send a message.");
+      return;
+    }
+
+    if (!textOverride) {
+      setInput('');
+      // Reset captcha after successful submission
+      if (recaptchaRef.current) recaptchaRef.current.reset();
+      setCaptchaToken(null);
+    }
     
     const userMessage = { id: Date.now(), sender: 'user', text: messageText };
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
+
+    // 1. Google Web Risk API Check (Check for malicious URLs in user input)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = messageText.match(urlRegex);
+    if (urls && urls.length > 0) {
+      try {
+        const securityCheck = await fetch('/api/security/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: urls[0] }) // check first URL
+        });
+        const secData = await securityCheck.json();
+        if (secData.safe === false) {
+          setMessages((prev) => [
+            ...prev,
+            { id: Date.now(), sender: 'bot', isJson: false, text: "🛡️ Security Alert: The link you provided has been flagged as unsafe by Google Web Risk API. I cannot process this request." }
+          ]);
+          setIsLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.warn("Security check failed, proceeding cautiously.");
+      }
+    }
 
     try {
       const response = await fetch('/api/assistant', {
@@ -332,24 +369,35 @@ function AssistantChat() {
           className="chat-input-container" 
           onSubmit={(e) => { e.preventDefault(); handleSend(); }}
           aria-label="Chat input form"
+          style={{ flexDirection: 'column', gap: '0.5rem' }}
         >
-          <input
-            type="text"
-            className="chat-input"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="E.g., 'I am 18', 'Quiz me', or 'Explain Lok Sabha'..."
-            disabled={isLoading}
-            aria-label="Message to assistant"
-          />
-          <button 
-            type="submit" 
-            className="send-btn" 
-            disabled={isLoading || !input.trim()}
-            aria-label="Send message"
-          >
-            <Send size={20} aria-hidden="true" />
-          </button>
+          <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+            <input
+              type="text"
+              className="chat-input"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="E.g., 'I am 18', 'Quiz me', or 'Explain Lok Sabha'..."
+              disabled={isLoading}
+              aria-label="Message to assistant"
+            />
+            <button 
+              type="submit" 
+              className="send-btn" 
+              disabled={isLoading || !input.trim() || !captchaToken}
+              aria-label="Send message"
+            >
+              <Send size={20} aria-hidden="true" />
+            </button>
+          </div>
+          <div className="recaptcha-wrapper" style={{ alignSelf: 'flex-start', transform: 'scale(0.85)', transformOrigin: 'left center', marginTop: '-5px' }}>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+              onChange={(token) => setCaptchaToken(token)}
+              theme="dark"
+            />
+          </div>
         </form>
       </div>
     </div>
