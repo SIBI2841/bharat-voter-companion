@@ -30,6 +30,7 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 
 ### 🛡️ Secure & Accessible
 - **🔒 Security First** — Implemented **Helmet.js** for secure HTTP headers, **express-rate-limit** for DDoS protection, and a strict **Content Security Policy (CSP)**.
+- **🛡️ Bot & Threat Protection** — Features **Google reCAPTCHA v2** to prevent bot spam and the **Google Cloud Web Risk API** to scan and block malicious user-submitted URLs.
 - **♿ ARIA Compliance & Audio** — Full screen reader support, ARIA landmarks, and native **Web Speech API** for zero-config, lightning-fast audio responses.
 - **⏱️ Real-Time Context** — Integrated a **Live Clock and Date** display directly in the navigation bar.
 - **🧪 Automated Testing** — Integrated **Node.js Test Runner** and **Supertest** for high-confidence API reliability.
@@ -44,6 +45,7 @@ The app uses a rich, glassmorphism-inspired UI with the colors of the Indian tri
 
 ### 📅 Election Timeline
 - Visual, interactive timeline of the complete Indian election process
+- **Google Calendar Integration**: One-click "Add to Calendar" buttons for important election dates and deadlines
 - From voter registration to result declaration
 
 ### ✅ Voting Steps Guide
